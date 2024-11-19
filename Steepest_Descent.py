@@ -11,8 +11,9 @@ def driver (n,K):
     b = np.random.randn(n,1)
     b = b / norm(b)
 
-
-    x = SD(A, b, 1e-6, 50)
+    A = np.array([[2,1],[1,2]])
+    b = np.array([[4],[3]])
+    x = SD(A, b, 1e-6, 40)
 
 
 def SD (A, b, tol, nmax):
@@ -27,18 +28,18 @@ def SD (A, b, tol, nmax):
     '''
     # define first guess 
     xk = b
-
+    its = np.empty([nmax, b.size])
+    its[0,:] = xk.T
+    
     # iteration
     n = 0
-    while n < nmax:
+    for i in range(1,nmax):
         rk = b - A @ xk
-        ak = np.inner(rk, rk) / np.inner(rk, A @ rk)
+        ak = np.dot(rk.T, rk) / np.dot(rk.T, A @ rk)
         xk1 = xk + ak*rk
+        its[i] = xk1.T
 
-        x = norm(xk1, xk)
-        print(xk1, xk)
-
-        if norm(xk1, xk) < tol:
+        if norm(xk1 - xk) < tol: 
             print('Solution accurate to the given tolerance found')
             return xk1
         n += 1
@@ -47,6 +48,4 @@ def SD (A, b, tol, nmax):
     print('Maximum Number of iterations exceeded')
     return 0 
 
-
-
-
+driver(10,1)
