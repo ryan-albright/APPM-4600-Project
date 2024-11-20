@@ -16,28 +16,28 @@ def driver (n,K):
     # Small Test
     # A = np.array([[2,1],[1,2]])
     # b = np.array([[4],[3]])
-
+    print(np.linalg.cond(A), D)
     [x, iterates, it_count] = SD(A, b, 1e-8, 5000)
 
-    # Order of Convergence Experiments
-    print(f'Please see the experiment for order of convergence with n = {n} and kappa = {K}')
+    # Convergence Experiments
+    print(f'Please see the below experiment to test convergence with n = {n} and kappa = {K}')
     diffs = iterates - x.T
-    err = [norm(diff) for diff in diffs]
+    err = np.array([norm(diff) for diff in diffs])
+    rate = np.average(err[1:] / err[:-1])
     plt.semilogy(err)
     plt.ylabel('en+1 - en')
     plt.xlabel('Iteration')
     plt.show()
+    print(f'The order of convergence is linear with rate {rate}')
 
     # Time experiments
-    print(f'Please see below the experiments performed to test run time')
+    print(f'Please see below the experiments performed to test run time with n = {n} and kappa = {K}')
     t_0 = time.time()
     for j in range(100):
         [x, iterates, it_count] = SD(A, b, 1e-8, 5000, verb = False)
     t_1 = time.time()
     print(f'Average time: {(t_1 - t_0)/100} seconds')
     print(f'Number of iterations: {it_count}')
-
-
 
 def SD (A, b, tol, nmax, verb = True):
     '''
@@ -73,4 +73,4 @@ def SD (A, b, tol, nmax, verb = True):
         print('Maximum Number of iterations exceeded')
     return [0, iterates[:i,:], i] 
 
-driver(10,19)
+driver(100,100000)
