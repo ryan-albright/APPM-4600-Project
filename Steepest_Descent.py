@@ -11,10 +11,12 @@ def driver (n,K):
     b = np.random.randn(n,1)
     b = b / norm(b)
 
-    A = np.array([[2,1],[1,2]])
-    b = np.array([[4],[3]])
-    x = SD(A, b, 1e-6, 40)
+    # Small Test
+    # A = np.array([[2,1],[1,2]])
+    # b = np.array([[4],[3]])
 
+    [x, iterates] = SD(A, b, 1e-6, 200)
+    
 
 def SD (A, b, tol, nmax):
     '''
@@ -25,27 +27,27 @@ def SD (A, b, tol, nmax):
     nmax - maximum number of iterations
     Outputs:
     xk - steepest descent solution
+    its - the iterations taken to find the solution
     '''
     # define first guess 
     xk = b
-    its = np.empty([nmax, b.size])
-    its[0,:] = xk.T
+    iterates = np.zeros([nmax, b.size])
+    iterates[0,:] = xk.T
     
     # iteration
-    n = 0
     for i in range(1,nmax):
         rk = b - A @ xk
         ak = np.dot(rk.T, rk) / np.dot(rk.T, A @ rk)
         xk1 = xk + ak*rk
-        its[i] = xk1.T
+        iterates[i,:] = xk1.T
 
-        if norm(xk1 - xk) < tol: 
+        if norm(xk1 - xk) < tol: # is this the correct way to check tolerance or is it w ak?
             print('Solution accurate to the given tolerance found')
-            return xk1
-        n += 1
+            print(f'Algorithm took {i} iterations to find the solution') 
+            return [xk1, iterates[:i+1,:]] # trims off zeros
         xk = xk1
 
     print('Maximum Number of iterations exceeded')
-    return 0 
+    return [0, iterates[:i+1,:]] 
 
-driver(10,1)
+driver(100,30)
