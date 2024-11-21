@@ -74,13 +74,7 @@ def SD(A, b, tol, nmax, verb=True):
         x_new = x + alpha * p
         r_new = r - alpha * Ap
         
-        # Convergence check
-        if norm(r_new) < tol:
-            if verb:
-                print('Solution accurate to the given tolerance found')
-                print(f'Algorithm took {i} iterations to find the solution') 
-            return [x_new, iterates[:i+1, :], i+1]
-        
+               
         # Compute beta (conjugacy parameter)
         beta = float((r_new.T @ r_new) / (r.T @ r))
         
