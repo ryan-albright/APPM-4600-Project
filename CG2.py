@@ -39,49 +39,63 @@ def driver (n,K):
     print(f'Average time: {(t_1 - t_0)/100} seconds')
     print(f'Number of iterations: {it_count}')
 
-def SD (A, b, tol, nmax, verb = True):
+    
+
+def SD(A, b, tol, nmax, verb=True):
     '''
+    Conjugate Gradient Method
     Inputs: 
     A - SPD matrix of size n x n  
     b - matrix of size n x 1
     tol - required tolerance
     nmax - maximum number of iterations
     Outputs:
-    xk - steepest descent solution
+    xk - solution
     its - the iterates calculated to find the solution
     i - the number of iterations taken
     '''
-    # define first guess
+    # Initialize
     iterates = np.zeros([nmax, b.size])
     
-    x = b.copy()
-    convergence_history = []
-    r = b - A @ x
-    z = r.copy()
-    r_norm_sq = r.T @ r
-
+    x = np.zeros_like(b)  # Start from zero initial guess
+    r = b - A @ x  # Initial residual
+    p = r.copy()   # Initial search direction
     
-    
-    # iteration
+    # Iteration
     for i in range(nmax):
-        Az = A @ z
-        alpha =(r_norm_sq / (z.T @ Az))
-        x_new = x + alpha * z
-        r_new = x + alpha * z
-        r_nrom_sq_new = r_new.T @ r_new
-        beta = float(r_nrom_sq_new / r_norm_sq)
-
-
+        # Store current iterate
+        iterates[i, :] = x.flatten()
         
-
-        if norm(x_new - x) < tol: # is this the correct way to check tolerance or is it w ak?
+        # Compute step length
+        Ap = A @ p
+        alpha = float((r.T @ r) / (p.T @ Ap))
+        
+        # Update solution and residual
+        x_new = x + alpha * p
+        r_new = r - alpha * Ap
+        
+        # Convergence check
+        if norm(r_new) < tol:
             if verb:
                 print('Solution accurate to the given tolerance found')
                 print(f'Algorithm took {i} iterations to find the solution') 
-            return [x_new, iterates[:i,:], i] # trims off zeros
+            return [x_new, iterates[:i+1, :], i+1]
         
+        # Compute beta (conjugacy parameter)
+        beta = float((r_new.T @ r_new) / (r.T @ r))
+        
+        # Update search direction
+        p = r_new + beta * p
+        
+        # Prepare for next iteration
+        x = x_new
+        r = r_new
+
+    # If maximum iterations reached
     if verb:
         print('Maximum Number of iterations exceeded')
-    return [0, iterates[:i,:], i] 
+    return [x, iterates[:nmax, :], nmax]
 
-driver(100,100000)
+
+# Run the driver
+driver(100, 100000)
