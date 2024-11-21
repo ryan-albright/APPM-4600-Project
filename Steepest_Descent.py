@@ -4,40 +4,69 @@ from numpy.linalg import norm
 import time
 
 
-def driver (n,K):
-    # create a symmetric positive definite matrix
-    [Q, R] = np.linalg.qr(np.random.randn(n,n))
-    D = np.diag(np.linspace(1,K,n))
-    
-    A = Q @ D @ Q.T
-    b = np.random.randn(n,1)
-    b = b / norm(b)
-
-    # Small Test
-    # A = np.array([[2,1],[1,2]])
-    # b = np.array([[4],[3]])
-    print(np.linalg.cond(A), D)
-    [x, iterates, it_count] = SD(A, b, 1e-8, 5000)
-
+def driver ():
     # Convergence Experiments
-    print(f'Please see the below experiment to test convergence with n = {n} and kappa = {K}')
-    diffs = iterates - x.T
-    err = np.array([norm(diff) for diff in diffs])
-    rate = np.average(err[1:] / err[:-1])
-    plt.semilogy(err)
+    print(f'Please see the below experiment to test convergence of the steepest descent method')
+    K = 100
+    rate_n = []
+
+    # Experiment for changing n and keeping K constant
+    for n in [10,100,1000]:
+        # create a symmetric positive definite matrix
+        [Q, R] = np.linalg.qr(np.random.randn(n,n))
+        D = np.diag(np.linspace(1,K,n))
+    
+        A = Q @ D @ Q.T
+        b = np.random.randn(n,1)
+        b = b / norm(b)
+
+        [x, iterates, it_count] = SD(A, b, 1e-8, 5000)
+
+        diffs = iterates - x.T
+        err = np.array([norm(diff) for diff in diffs])
+        rate_n.append(np.average(err[1:] / err[:-1]))
+        plt.semilogy(err)
+    
     plt.ylabel('en+1 - en')
     plt.xlabel('Iteration')
+    # Caption Iteration of Steepest Descent Method on an A matrix of size n x n with condition number K = 20
+    plt.legend(['n = 10', 'n = 100', 'n = 1000'])
     plt.show()
-    print(f'The order of convergence is linear with rate {rate}')
+    print(f'The order of convergence is linear for n = [10, 100, 1000] at rate {rate_n}')
+
+    # Experiment for changing K and keeping n constant
+    for n in [10,100,1000]:
+        plt.figure()
+        for K in [10, 100, 1000, 10000]:
+            # create a symmetric positive definite matrix
+            [Q, R] = np.linalg.qr(np.random.randn(n,n))
+            D = np.diag(np.linspace(1,K,n))
+        
+            A = Q @ D @ Q.T
+            b = np.random.randn(n,1)
+            b = b / norm(b)
+
+            [x, iterates, it_count] = SD(A, b, 1e-8, 5000, verb = False)
+
+            diffs = iterates - x.T
+            err = np.array([norm(diff) for diff in diffs])
+            plt.semilogy(err)
+        plt.ylabel('en+1 - en')
+        plt.xlabel('Iteration')
+        plt.legend(['K = 10', 'K = 100', 'K = 1000', 'K = 10000'])
+    plt.show()
+
+
+
 
     # Time experiments
-    print(f'Please see below the experiments performed to test run time with n = {n} and kappa = {K}')
-    t_0 = time.time()
-    for j in range(100):
-        [x, iterates, it_count] = SD(A, b, 1e-8, 5000, verb = False)
-    t_1 = time.time()
-    print(f'Average time: {(t_1 - t_0)/100} seconds')
-    print(f'Number of iterations: {it_count}')
+    # print(f'Please see below the experiments performed to test run time with n = {n} and kappa = {K}')
+    # t_0 = time.time()
+    # for j in range(100):
+    #     [x, iterates, it_count] = SD(A, b, 1e-8, 5000, verb = False)
+    # t_1 = time.time()
+    # print(f'Average time: {(t_1 - t_0)/100} seconds')
+    # print(f'Number of iterations: {it_count}')
 
 def SD (A, b, tol, nmax, verb = True):
     '''
@@ -73,4 +102,4 @@ def SD (A, b, tol, nmax, verb = True):
         print('Maximum Number of iterations exceeded')
     return [0, iterates[:i,:], i] 
 
-driver(100,100000)
+driver()
