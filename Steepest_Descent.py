@@ -76,6 +76,45 @@ def driver (exp_type):
         print(f'Average time: {(t_1 - t_0)/100} seconds')
         print(f'Number of iterations: {it_count}')
 
+    # Example plot of SD pattern
+    elif exp_type == 'SD_behavior':
+        A = np.array([[3,2],[2,6]])
+        b = np.array([[2],[-8]])
+        
+        [x, iterates, it_count] = SD(A, b, 1e-8, 5000)
+
+        f = lambda x: 0.5*x @ A @ x.T - b.T @ x
+
+        n = 50
+        x1 = np.linspace(-2,4,n)
+        x2 = np.linspace(-8,2,n)
+
+        x1, x2 = np.meshgrid(x1,x2)
+
+        y = []
+        for i in range(n):
+            r1 = x1[i]
+            r2 = x2[i]
+            yr = np.empty(n)
+            for j in range(n):
+                x = np.array([r1[j], r2[j]])
+                yr[j] = (0.5*x @ A @ x.T - b.T @ x)[0]
+            y.append(yr)
+        y = np.array(y)
+
+        it1 = []
+        it2 = []
+        for i in iterates:
+            it1.append(i[0])
+            it2.append(i[1])
+
+        plt.plot(it1,it2)
+        plt.contour(x1, x2, y, 6, colors='k')  # Negative contours default to dashed.
+        plt.show()
+
+
+
+
 def SD (A, b, tol, nmax, verb = True):
     '''
     Inputs: 
@@ -110,4 +149,4 @@ def SD (A, b, tol, nmax, verb = True):
         print('Maximum Number of iterations exceeded')
     return [0, iterates[:i,:], i] 
 
-driver('time') # choose experiment type: 'constant_n', 'constant_k', or 'timing'
+driver('SD_behavior') # choose experiment type: 'constant_n', 'constant_k', 'SD_behavior', or 'timing'
