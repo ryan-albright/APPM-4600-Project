@@ -92,7 +92,7 @@ def driver():
     
     plt.ylabel('Relative Error')
     plt.xlabel('Iteration')
-    plt.title('CG Convergence for Different Problem Sizes (K=100)')
+    #plt.title('CG Convergence for Different Problem Sizes (K=100)')
     plt.legend()
     plt.grid(True)
     plt.show()
@@ -121,7 +121,7 @@ def driver():
             
         plt.ylabel('Relative Error')
         plt.xlabel('Iteration')
-        plt.title(f'CG Convergence for Different Condition Numbers (n={n})')
+        #plt.title(f'CG Convergence for Different Condition Numbers (n={n})')
         plt.legend()
         plt.grid(True)
         plt.show()
