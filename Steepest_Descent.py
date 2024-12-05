@@ -37,8 +37,10 @@ def driver (exp_type):
 
     # Experiment for changing K and keeping n constant
     elif exp_type == 'constant_k':
-        for n in [10,100,1000]:
-            plt.figure()
+        i = 1
+
+        for n in [10,100,500,1000]:
+            plt.subplot(2,2,i)
             for K in [10, 100, 1000, 10000]:
                 # create a symmetric positive definite matrix
                 [Q, R] = np.linalg.qr(np.random.randn(n,n))
@@ -56,6 +58,7 @@ def driver (exp_type):
             plt.ylabel('en+1 - en')
             plt.xlabel('Iteration')
             plt.legend(['K = 10', 'K = 100', 'K = 1000', 'K = 10000'])
+            i += 1
         plt.show()
 
     # Time experiments
@@ -113,8 +116,6 @@ def driver (exp_type):
         plt.show()
 
 
-
-
 def SD (A, b, tol, nmax, verb = True):
     '''
     Inputs: 
@@ -149,4 +150,4 @@ def SD (A, b, tol, nmax, verb = True):
         print('Maximum Number of iterations exceeded')
     return [0, iterates[:i,:], i] 
 
-driver('SD_behavior') # choose experiment type: 'constant_n', 'constant_k', 'SD_behavior', or 'timing'
+driver('constant_k') # choose experiment type: 'constant_n', 'constant_k', 'SD_behavior', or 'timing'
