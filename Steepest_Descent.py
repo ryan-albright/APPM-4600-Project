@@ -55,10 +55,11 @@ def driver (exp_type):
                 diffs = iterates - x.T
                 err = np.array([norm(diff) for diff in diffs])
                 plt.semilogy(err)
+            plt.title(f'N = {n}')
             plt.ylabel('en+1 - en')
             plt.xlabel('Iteration')
-            plt.legend(['K = 10', 'K = 100', 'K = 1000', 'K = 10000'])
             i += 1
+        plt.figlegend(['K = 10', 'K = 100', 'K = 1000', 'K = 10000'], loc='upper center', ncol=4)
         plt.show()
 
     # Time experiments
