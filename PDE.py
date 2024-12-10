@@ -100,7 +100,7 @@ def poisson(dimension, n):
         a = -np.pi / np.sqrt(2)
         b = np.pi / np.sqrt(2)
 
-        a, b = -5, 5
+        a, b = -1, 1
 
         # Dirichlet Boundary Conditions
         gamma = lambda x,y: x*y*0 + 1
@@ -249,7 +249,7 @@ def CG(A, b, tol, nmax, verb=True):
     return x, iterates[:i+1, :], i+1#, x_star        
 
 # poisson(1, [10,100,1000])
-poisson(2,50)
+poisson(2,70)
 
 
         
