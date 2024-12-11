@@ -83,7 +83,6 @@ def poisson(dimension, n):
             A3 = np.diag([-1]*(n-1),-1)
 
             A = (-1/h**2)*(A1 + A2 + A3)
-
             [y, iterates, it_count]  = CG(A,b,10**-8, 3000, True)
 
             # Plot of the numerical solution to the PDE
@@ -103,7 +102,8 @@ def poisson(dimension, n):
         a, b = -1, 1
 
         # Dirichlet Boundary Conditions
-        gamma = lambda x,y: x*y*0 + 1
+        gamma_1 = lambda x,y: x*y*0 - 2
+        gamma_2 = lambda x,y: x*y*0 + 2
 
         print(f"Here is the numerical solution for 2D Poisson on a square wih Dirichlet boundary conditions u(x,y) = 1 on the boundary")
 
@@ -131,6 +131,7 @@ def poisson(dimension, n):
                     A[i,j-1] = 0
                     A[i-1,j] = 0
 
+        # print(np.linalg.eigvals(A)) Can run this line to check if SPD or SND...
         # Creating b vector
         b = np.empty((n,n))
 
@@ -141,28 +142,28 @@ def poisson(dimension, n):
                 xhp, yhp = x1[i+1], x2[i+1]
                 # top left corner
                 if i == 1 and j == 1:
-                    b[i-1,j-1] = func_2d(x,y) - gamma(x,yhp) / h**2 - gamma(xhm,y) / h**2
+                    b[i-1,j-1] = func_2d(x,y) - gamma_1(x,yhp) / h**2 - gamma_2(xhm,y) / h**2
                 # top side
                 elif j == 1 and i != 1 and i != n:
-                    b[i-1,j-1] = func_2d(x,y) - gamma(x,yhp) / h**2
+                    b[i-1,j-1] = func_2d(x,y) - gamma_1(x,yhp) / h**2
                 # top right corner
                 elif i == n and j == 1:
-                    b[i-1,j-1] = func_2d(x,y) - gamma(x,yhp) / h**2 - gamma(xhp,y) / h**2
+                    b[i-1,j-1] = func_2d(x,y) - gamma_1(x,yhp) / h**2 - gamma_2(xhp,y) / h**2
                 # left side
                 elif i == 1 and j != 1 and j != n:
-                    b[i-1,j-1] = func_2d(x,y) - gamma(xhm,y) / h**2
+                    b[i-1,j-1] = func_2d(x,y) - gamma_2(xhm,y) / h**2
                 # right side
                 elif i == n and j != 1 and j != n:
-                    b[i-1,j-1] = func_2d(x,y) - gamma(xhp,y) / h**2
+                    b[i-1,j-1] = func_2d(x,y) - gamma_2(xhp,y) / h**2
                 # bottom left corner
                 elif i == 1 and j == n:
-                    b[i-1,j-1] = func_2d(x,y) - gamma(xhm,y) / h**2 - gamma(x,yhm) / h**2
+                    b[i-1,j-1] = func_2d(x,y) - gamma_2(xhm,y) / h**2 - gamma_1(x,yhm) / h**2
                 # bottom side
                 elif j == n and i != 1 and i != n:
-                    b[i-1,j-1] = func_2d(x,y) - gamma(x,yhm) / h**2
+                    b[i-1,j-1] = func_2d(x,y) - gamma_1(x,yhm) / h**2
                 # bottom right corner
                 elif i == n and j == n:
-                    b[i-1,j-1] = func_2d(x,y) - gamma(x,yhm) / h**2 - gamma(xhp,y) / h**2
+                    b[i-1,j-1] = func_2d(x,y) - gamma_1(x,yhm) / h**2 - gamma_2(xhp,y) / h**2
                 # interior points
                 else:
                     b[i-1,j-1] = func_2d(x,y)
@@ -180,15 +181,21 @@ def poisson(dimension, n):
 
         z = y.reshape(n,n)
         # We basically need to add the boundary points to the outside of the matrix
-        y = gamma(x1_grid, x2_grid)
-        y[1:n+1,1:n+1] = z
+        y1 = gamma_1(x1_grid, x2_grid)
+        y2 = gamma_2(x1_grid, x2_grid)
 
-        surf = ax.plot_surface(x1_grid, x2_grid, y, cmap='viridis')
+        y1[0,1:n+1] = y2[0,1:n+1]
+        y1[n+1,1:n+1] = y2[0,1:n+1]
+
+        y1[1:n+1,1:n+1] = z
+
+        surf = ax.plot_surface(x1_grid, x2_grid, y1, cmap='viridis')
         plt.show()
 
 
 def func_2d(x, y):
-        return -np.sin(x + np.pi/2) - np.cos(y)
+        # return -np.sin(x + np.pi/2) - np.cos(y)
+        return np.sin(x)
 
 def CG(A, b, tol, nmax, verb=True):
     '''
@@ -249,7 +256,7 @@ def CG(A, b, tol, nmax, verb=True):
     return x, iterates[:i+1, :], i+1#, x_star        
 
 # poisson(1, [10,100,1000])
-poisson(2,70)
+poisson(2,50)
 
 
         
