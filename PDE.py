@@ -96,14 +96,11 @@ def poisson(dimension, n):
         # # Define initial problem # #
         
         # Interval
-        a = -np.pi / np.sqrt(2)
-        b = np.pi / np.sqrt(2)
-
         a, b = -1, 1
 
         # Dirichlet Boundary Conditions
-        gamma_1 = lambda x,y: x*y*0 - 2
-        gamma_2 = lambda x,y: x*y*0 + 2
+        gamma_1 = lambda x,y: x*y*0 
+        gamma_2 = lambda x,y: x*y*0 - np.sin(x)
 
         print(f"Here is the numerical solution for 2D Poisson on a square wih Dirichlet boundary conditions u(x,y) = 1 on the boundary")
 
@@ -123,7 +120,7 @@ def poisson(dimension, n):
         A4 = np.diag([-1]*(n**2 - n),n)
         A5 = np.diag([-1]*(n**2 - n),-n)
 
-        A = (-1/h**2)*(A1 + A2 + A3 +A4 + A5)
+        A = (-1/h**2)*(A1 + A2 + A3 + A4 + A5)
 
         for i in range(n**2):
             for j in range(n**2):
@@ -194,8 +191,8 @@ def poisson(dimension, n):
 
 
 def func_2d(x, y):
-        # return -np.sin(x + np.pi/2) - np.cos(y)
-        return np.sin(x)
+        return -np.sin(x + np.pi/2) - np.cos(y)
+        # return np.sin(x)
 
 def CG(A, b, tol, nmax, verb=True):
     '''
@@ -257,6 +254,7 @@ def CG(A, b, tol, nmax, verb=True):
 
 # poisson(1, [10,100,1000])
 poisson(2,50)
+
 
 
         
